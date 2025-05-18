@@ -1,0 +1,7 @@
+Bundle-Name: nafath-application-service
+Bundle-SymbolicName: com.mirum.nafath.application.service
+Bundle-Version: 1.0.0
+Export-Package: com.mirum.nafath.application.service.constants
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"

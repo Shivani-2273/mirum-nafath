@@ -1,0 +1,38 @@
+package com.mirum.nafath.application.service.configuration;
+import aQute.bnd.annotation.metatype.Meta;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+
+
+@ExtendedObjectClassDefinition(
+        category = "nafath-configuration",
+        scope = ExtendedObjectClassDefinition.Scope.SYSTEM
+)
+@Meta.OCD(
+        id = "com.mirum.nafath.application.service.configuration.NafathConfiguration",
+        localization = "content/Language",
+        name = "Nafath Configuration"
+)
+public interface NafathConfiguration {
+
+    @Meta.AD(
+            deflt = "",
+            required = false,
+            name = "app-id"
+    )
+    String getAppID();
+
+    @Meta.AD(
+            deflt = "",
+            required = false,
+            name = "app-key"
+    )
+    String getAppKey();
+
+    @Meta.AD(
+            deflt = "",
+            required = false,
+            name = "base-url"
+    )
+    String getBaseURL();
+
+}
