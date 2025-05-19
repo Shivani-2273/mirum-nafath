@@ -1,5 +1,17 @@
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="com.liferay.portal.kernel.util.ResourceBundleUtil" %>
 <%@ include file="/init.jsp" %>
+
+<%
+	// Initialize the ResourceBundle
+	ThemeDisplay themeDisplayNew = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
+	ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplayNew.getLocale(), getClass());
+%>
+
+<portlet:resourceURL id="getFacilities" var="getFacilitiesURL" />
+<portlet:resourceURL id="getFacilityDetails" var="getFacilityDetailsURL" />
+
 
 <portlet:actionURL name="/submitForm" var="submitActionURL" />
 
@@ -36,10 +48,37 @@
 	<div class="id-numbers-block">
 		<aui:input name="Text48247902" type="text" label='<%= LanguageUtil.get(request, "id-number") %>' id="id-number" />
 	</div>
-	<div class="commercial-register-block">
-		<aui:input name="Text32667190" type="text" label='<%= LanguageUtil.get(request, "commercial-register-number") %>' id="commercial-register-number"  />
+<%--	<div class="commercial-register-block">--%>
+<%--		<aui:input name="Text32667190" type="text" label='<%= LanguageUtil.get(request, "commercial-register-number") %>' id="commercial-register-number"  />--%>
+<%--	</div>--%>
 
+	<div class="commercial-register-block">
+		<div class="d-flex align-items-end mb-2">
+			<div id="<portlet:namespace />crNumberFullDiv" class="w-100">
+				<aui:input name="Text32667190" type="text" label='<%= LanguageUtil.get(request, "commercial-register-number") %>' id="commercial-register-number" />
+			</div>
+			<div id="<portlet:namespace />crNumberPartialDiv" style="display: none; width: 80%;">
+				<aui:input name="Text32667190" type="text" label='<%= LanguageUtil.get(request, "commercial-register-number") %>' id="commercial-register-number-joint" />
+			</div>
+
+			<div id="<portlet:namespace />authBtnDiv" style="display: none; margin-left: 10px;">
+				<button id="<portlet:namespace />verifyBtn" class="btn btn-primary verify-btn" type="button">
+					<liferay-ui:message key="authenticate" />
+				</button>
+			</div>
+		</div>
+		<div id="<portlet:namespace />commercialRegisterErrorContainer" class="error-message-container mt-1" style="display: none; text-align: right;"></div>
+
+
+
+		<div id="<portlet:namespace />facilityDropdownContainer" style="display: none;" class="mb-3">
+			<label class="control-label"><liferay-ui:message key="select-facility" /></label>
+			<select class="form-control" id="<portlet:namespace />facilityDropdown">
+				<option value=""><liferay-ui:message key="select-facility" /></option>
+			</select>
+		</div>
 	</div>
+
 	<!-- Name Fieldset -->
 	<aui:fieldset label='<%= LanguageUtil.get(request, "the-name-fieldset") %>' id="the-name-fieldset">
 	<aui:fieldset-group>
@@ -480,7 +519,30 @@
 </aui:form>
 </div>
 
+<aui:script>
+
+	window.apiConfig = {
+	getFacilitiesURL: '${getFacilitiesURL}',
+	getFacilityDetailsURL: '${getFacilityDetailsURL}'
+	};
+
+
+	// Create window-level variables for language keys
+	window.formLanguageKeys = {
+	'please-select-one-option': '<%= LanguageUtil.get(resourceBundle, "please-select-one-option") %>',
+	'custom-field-is-required': '<%= LanguageUtil.get(resourceBundle, "custom-field-is-required") %>',
+	'please-select-at-least-one-activity': '<%= LanguageUtil.get(resourceBundle, "please-select-at-least-one-activity") %>',
+	'please-select-at-least-one-event': '<%= LanguageUtil.get(resourceBundle, "please-select-at-least-one-event") %>',
+	'please-enter-valid-email': '<%= LanguageUtil.get(resourceBundle, "please-enter-valid-email") %>',
+	'please-enter-valid-mobile': '<%= LanguageUtil.get(resourceBundle, "please-enter-valid-mobile") %>',
+	'please-agree-to-terms': '<%= LanguageUtil.get(resourceBundle, "please-agree-to-terms") %>'
+	};
+</aui:script>
+
+
 <script src="<%=request.getContextPath()%>/js/index.js"></script>
+<script src="<%=request.getContextPath()%>/js/facility-integration.js"></script>
+
 <script>
 	window.portletNamespace = '<portlet:namespace />';
 </script>

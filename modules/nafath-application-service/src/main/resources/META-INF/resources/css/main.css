@@ -40,6 +40,42 @@
     position: relative;
 }
 
+.read-only-field {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.field-read-only label {
+    color: #6c757d;
+}
+
+.required-field::after {
+    content: " *";
+    color: red;
+}
+
+
+/* Add this to your CSS */
+.error-message-container {
+    min-height: 20px;
+    margin-top: 4px;
+}
+
+.error-message {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+}
+
+.arabic-text {
+    font-family: "Tahoma", "Arial", sans-serif;
+}
+
+/* Ensure text-danger is visible */
+.text-danger {
+    color: #dc3545 !important;
+}
 
 
 .form-heading h1{
@@ -53,6 +89,9 @@
 .form-header-line{
     background-color: #cdced9;
     height: 1px
+}
+.contact-form .verify-btn{
+    margin: 0 0 25px 20px!important;
 }
 .contact-form .required-indicator {
     margin: 40px 10px 20px 10px;

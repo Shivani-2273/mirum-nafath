@@ -35,4 +35,25 @@ public interface NafathConfiguration {
     )
     String getBaseURL();
 
+    @Meta.AD(
+            deflt = "https://es.jcci.org.sa/backend",
+            required = false,
+            name = "facility-base-url"
+    )
+    String getFacilityBaseURL();
+
+    @Meta.AD(
+            deflt = "gWKDkcyjEgtq12fNT3qp3ZfkcAxFgbyqpN6BrqX5AMn7",
+            required = false,
+            name = "facility-api-username"
+    )
+    String getFacilityAPIUsername();
+
+    @Meta.AD(
+            deflt = "khSXrNM+SRxZkuTnXPz55X1WvmfLAqsA2Tv21PtTZRD7oLE1nFiDafAZ5dH39sTz",
+            required = false,
+            name = "facility-api-password"
+    )
+    String getFacilityAPIPassword();
+
 }
