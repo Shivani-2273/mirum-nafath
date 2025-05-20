@@ -43,14 +43,14 @@ public interface NafathConfiguration {
     String getFacilityBaseURL();
 
     @Meta.AD(
-            deflt = "gWKDkcyjEgtq12fNT3qp3ZfkcAxFgbyqpN6BrqX5AMn7",
+            deflt = "default",
             required = false,
             name = "facility-api-username"
     )
     String getFacilityAPIUsername();
 
     @Meta.AD(
-            deflt = "khSXrNM+SRxZkuTnXPz55X1WvmfLAqsA2Tv21PtTZRD7oLE1nFiDafAZ5dH39sTz",
+            deflt = "default",
             required = false,
             name = "facility-api-password"
     )

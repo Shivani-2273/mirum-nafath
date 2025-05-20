@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.mirum.nafath.application.service.constants.NafathApplicationServicePortletKeys;
@@ -112,15 +113,21 @@ public class SubmitFormMVCActionCommand implements MVCActionCommand {
                 // Handle different field types
                 if (fieldDefinition != null && "checkbox_multiple".equals(fieldDefinition.getType())) {
                     // Create proper JSON array for checkbox_multiple fields
-                    _log.info("Processing checkbox_multiple field: " + fieldName);
+                    _log.debug("Processing checkbox_multiple field: " + fieldName);
                     ddmFormFieldValues.add(createJsonArrayField(fieldName, values, userLocale, availableLocales));
-                } else if (values.length > 1) {
-                    // Handle other multi-value fields
-                    _log.info("Processing multi-value field: " + fieldName);
-                    ddmFormFieldValues.add(createJsonArrayField(fieldName, values, userLocale, availableLocales));
+                } else if(values.length > 1){
+                    String beneficiaryType = ParamUtil.getString(actionRequest, "beneficiaryTypeValue", "");
+                    String valueToSave = "";
+                    if ("shared".equals(beneficiaryType)) {
+                        valueToSave = values[0];
+
+                    } else if ("joint".equals(beneficiaryType)) {
+                        valueToSave = values[1];
+                    }
+                    ddmFormFieldValues.add(createFieldValue(fieldName, valueToSave, userLocale, availableLocales));
                 } else {
                     // Single value field
-                    _log.info("Processing single value field: " + fieldName);
+                    _log.debug("Processing single value field: " + fieldName);
                     ddmFormFieldValues.add(createFieldValue(fieldName,
                             values.length > 0 ? values[0] : "", userLocale, availableLocales));
                 }

@@ -560,10 +560,13 @@ AUI().ready(function(A) {
                 var selectedValue = radio.get('id');
                 resetForm();
                 if (selectedValue.includes('beneficiaryIndividual')) {
+                    A.one('#' + namespace + 'beneficiaryTypeValue').set('value', 'individual');
                     showIndividualsForm();
                 } else if (selectedValue.includes('beneficiaryShared')) {
+                    A.one('#' + namespace + 'beneficiaryTypeValue').set('value', 'shared');
                     showSharedFacilityForm();
                 } else if (selectedValue.includes('beneficiaryJoint')) {
+                    A.one('#' + namespace + 'beneficiaryTypeValue').set('value', 'joint');
                     showJointVentureForm();
                 }
             });

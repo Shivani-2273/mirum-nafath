@@ -8,7 +8,7 @@
 	ThemeDisplay themeDisplayNew = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
 	ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplayNew.getLocale(), getClass());
 %>
-
+<c:if test="<%= themeDisplay.isSignedIn() %>">
 <portlet:resourceURL id="getFacilities" var="getFacilitiesURL" />
 <portlet:resourceURL id="getFacilityDetails" var="getFacilityDetailsURL" />
 
@@ -26,6 +26,8 @@
 		<span style="color:red">*</span> <liferay-ui:message key="indicate-required-fields" />
 	</div>
 <aui:form action="${submitActionURL}" method="post" name="contactForm" validateOnBlur="false" cssClass="form-validate" novalidate="novalidate">
+
+	<aui:input type="hidden" name="beneficiaryTypeValue" value="" />
 
 	<!-- Radio Group -->
 	<label class="aui-field-label mb-2 beneficiary-title">
@@ -546,3 +548,4 @@
 <script>
 	window.portletNamespace = '<portlet:namespace />';
 </script>
+</c:if>

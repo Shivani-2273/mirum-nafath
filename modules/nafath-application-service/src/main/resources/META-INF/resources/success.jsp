@@ -8,11 +8,21 @@
             <h3><liferay-ui:message key="thank-you" /></h3>
             <p><liferay-ui:message key="form-submitted-successfully-message" /></p>
             <div class="btn-container">
-                <a href="<portlet:renderURL />" class="btn btn-secondary">
-                    <liferay-ui:message key="back-to-form" />
-                </a>
+<%--                <a href="<portlet:renderURL />" class="btn btn-secondary">--%>
+<%--                    <liferay-ui:message key="back-to-form" />--%>
+<%--                </a>--%>
+    <a href="javascript:void(0);" onclick="redirectToForm()" class="btn btn-secondary">
+        <liferay-ui:message key="back-to-form" />
+    </a>
             </div>
         </div>
 
     </div>
 </div>
+
+<script>
+    function redirectToForm() {
+        var formUrl = '<portlet:renderURL />';
+        window.location.href = formUrl;
+    }
+</script>

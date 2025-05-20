@@ -111,8 +111,9 @@ function populateFacilityDropdown(facilities) {
         dropdown.remove(1);
     }
 
+    var uniqueFacilities = removeDuplicates(facilities,"unified700Number")
 
-    facilities.forEach(facility => {
+    uniqueFacilities.forEach(facility => {
         const option = document.createElement('option');
         option.value = facility.unified700Number;
         option.textContent = facility.titleAr;
@@ -128,9 +129,9 @@ function populateFacilityDropdown(facilities) {
 }
 
 // Helper function to remove duplicates from array by key
-// function removeDuplicates(array, key) {
-//     return Array.from(new Map(array.map(item => [item[key], item])).values());
-// }
+function removeDuplicates(array, key) {
+    return Array.from(new Map(array.map(item => [item[key], item])).values());
+}
 
 // Function to get facility details
 async function getFacilityDetails(unifiedNumber) {
@@ -156,11 +157,12 @@ async function getFacilityDetails(unifiedNumber) {
             autofillFormFields(data.data);
         } else {
             const errorMsg = data.errors && data.errors.length > 0 ? data.errors[0] : 'Failed to get facility details';
-            alert(errorMsg);
+            //alert(errorMsg);
+            console.error(errorMsg)
         }
     } catch (error) {
         console.error('Error getting facility details:', error);
-        alert(window.formLanguageKeys['api-error'] || 'Error getting facility details');
+        //alert(window.formLanguageKeys['api-error'] || 'Error getting facility details');
     }
 }
 
@@ -179,6 +181,24 @@ function autofillFormFields(facilityData) {
         'seniorOfficialEmail': `${namespace}email`,
         'seniorOfficialMobileNumber': `${namespace}mobile`
     };
+
+    //clear all fields value
+    Object.values(fieldMappings).forEach(formField =>{
+        const element = document.getElementById(formField);
+        if(element){
+            element.value = '';
+            element.readOnly = false;
+            element.classList.remove('read-only-field');
+
+            //reset parent container class if needed
+            const parent = element.closest('.form-group');
+            if(parent){
+                parent.classList.remove('field-read-only')
+            }
+        }
+
+    });
+
 
     // Fill in the fields
     for (const [apiField, formField] of Object.entries(fieldMappings)) {

@@ -25,7 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component(
-	property = {
+		immediate = true,
+		configurationPid = "com.mirum.nafath.application.service.configuration.NafathConfiguration",
+		property = {
 		"com.liferay.portlet.display-category=category.sample",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.instanceable=true",
@@ -50,17 +52,15 @@ public class NafathApplicationServicePortlet extends MVCPortlet {
 	@Modified
 	public void activate(Map<String, Object> properties) throws PortletException {
 		_nafathConfiguration = ConfigurableUtil.createConfigurable(NafathConfiguration.class, properties);
-		_log.info("Nafath Application Service Portlet initialized");
+		_log.debug("Nafath Application Service Portlet initialized");
 	}
 
 	@Override
 	public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 		try{
-			_log.info("based url "+_nafathConfiguration.getFacilityBaseURL());
 			renderRequest.setAttribute("facilityBaseUrl", _nafathConfiguration.getFacilityBaseURL());
 			renderRequest.setAttribute("facilityApiUserName", _nafathConfiguration.getFacilityAPIUsername());
 			renderRequest.setAttribute("facilityApiPassword", _nafathConfiguration.getFacilityAPIPassword());
-
 
 		}catch (Exception e){
 			_log.error("Error loading Nafath Configuration " + e.getMessage());
@@ -86,7 +86,7 @@ public class NafathApplicationServicePortlet extends MVCPortlet {
 
 	private void getFacilities(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
 		String identificationNumber = ParamUtil.getString(resourceRequest, "identificationNumber", "");
-		_log.info("identificationNumber="+identificationNumber);
+		_log.debug("identificationNumber="+identificationNumber);
 
 		if (identificationNumber.isEmpty()) {
 			sendJsonResponse(resourceResponse, createErrorResponse("Commercial Register Number is required"));
@@ -187,15 +187,8 @@ public class NafathApplicationServicePortlet extends MVCPortlet {
 	private String getAuthToken() {
 		_log.info("in getAuthToken");
 		try {
-			String baseUrl = _nafathConfiguration.getFacilityBaseURL();
-			String username = _nafathConfiguration.getFacilityAPIUsername();
-			String password = _nafathConfiguration.getFacilityAPIPassword();
 
-			_log.info("baseUrl="+baseUrl);
-			_log.info("username="+username);
-			_log.info("password="+password);
-
-			URL url = new URL(baseUrl + "/api/ApiAuth/login");
+			URL url = new URL(_nafathConfiguration.getFacilityBaseURL() + "/api/ApiAuth/login");
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
@@ -203,8 +196,8 @@ public class NafathApplicationServicePortlet extends MVCPortlet {
 
 			// Create request body
 			JSONObject requestBody = JSONFactoryUtil.createJSONObject();
-			requestBody.put("Username", username);
-			requestBody.put("Password", password);
+			requestBody.put("Username", _nafathConfiguration.getFacilityAPIUsername());
+			requestBody.put("Password",  _nafathConfiguration.getFacilityAPIPassword());
 
 			// Send request
 			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
