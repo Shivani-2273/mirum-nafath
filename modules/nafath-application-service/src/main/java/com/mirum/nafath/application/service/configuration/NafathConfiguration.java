@@ -29,11 +29,12 @@ public interface NafathConfiguration {
     String getAppKey();
 
     @Meta.AD(
-            deflt = "",
+
+            deflt = "https://nafath.api.elm.sa/api/v1",
             required = false,
             name = "base-url"
     )
-    String getBaseURL();
+    String getNafathBaseURL();
 
     @Meta.AD(
             deflt = "https://es.jcci.org.sa/backend",
@@ -55,5 +56,14 @@ public interface NafathConfiguration {
             name = "facility-api-password"
     )
     String getFacilityAPIPassword();
+
+    @Meta.AD(
+            deflt = "2112167",
+            required = false,
+            name = "form-instance-id"
+    )
+    String getFormInstanceID();
+
+
 
 }

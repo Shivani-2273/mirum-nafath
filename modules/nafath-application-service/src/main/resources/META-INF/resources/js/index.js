@@ -1,8 +1,25 @@
 AUI().ready(function(A) {
 
+    // Create a custom validation flag
+    window.formValidationPassed = false;
+
+    function findAndInitForm() {
         var namespace = window.portletNamespace;
         var form = A.one('#' + namespace + 'contactForm');
-        console.log("Form found:", form);
+
+        if (form && namespace) {
+            form.detach('submit');
+            console.log("Form ready! Initializing...");
+            initializeFormLogic(A, form, namespace);
+        } else {
+            setTimeout(findAndInitForm, 100);
+        }
+    }
+
+    // Start looking for the form
+    findAndInitForm();
+
+    function initializeFormLogic(A, form, namespace) {
 
     function getLanguageKey(key) {
         // First try our custom window.formLanguageKeys
@@ -25,6 +42,8 @@ AUI().ready(function(A) {
             'label.contact-information-label',
             'fieldset',
             '.email-mobile-block',
+            '.additional-mobile-block',
+            '.establishment-address',
             '.id-numbers-block',
             '.commercial-register-block',
             '.activities-section',
@@ -58,6 +77,7 @@ AUI().ready(function(A) {
             }
 
             if (window.selectedBeneficiaryType === 'joint') {
+
                 let crNumber = A.one('#' + namespace + 'commercial-register-number-joint')?.get('value')?.trim();
                 if (!crNumber) {
                     addErrorMessage('#' + namespace + 'commercial-register-number-joint', getLanguageKey('custom-field-is-required'));
@@ -213,6 +233,13 @@ AUI().ready(function(A) {
                 hasErrors = true;
             }
 
+            var additionalMobileField = A.one('#' + namespace + 'additional-mobile');
+            var additionalMobileVal = additionalMobileField?.get('value')?.trim();
+            if (additionalMobileVal && !/^05\d{8}$/.test(additionalMobileVal)) {
+                addErrorMessage('#' + namespace + 'additional-mobile', getLanguageKey('please-enter-valid-mobile'));
+                hasErrors = true;
+            }
+
 
             if (hasErrors) {
                 window.scrollTo(0, A.one('.error-message')?.getY() - 100 || 0);
@@ -222,8 +249,7 @@ AUI().ready(function(A) {
             return true;
         };
 
-
-        function addErrorMessage(selector, message) {
+    function addErrorMessage(selector, message) {
             const el = A.one(selector);
             if (!el) return;
             const errorHTML = `<div class="error-message"><span class="text-danger">${message}</span></div>`;
@@ -367,7 +393,6 @@ AUI().ready(function(A) {
             });
 
             // Reset commercial register field layout
-            const namespace = window.portletNamespace;
             document.getElementById(`${namespace}crNumberFullDiv`).style.display = 'block';
             document.getElementById(`${namespace}crNumberPartialDiv`).style.display = 'none';
             document.getElementById(`${namespace}authBtnDiv`).style.display = 'none';
@@ -405,9 +430,11 @@ AUI().ready(function(A) {
 
         function showCommonFields() {
             showBlockByClass('email-mobile-block');
+            showBlockByClass('additional-mobile-block');
             showFieldsetSection('the-name-fieldset');
             showFieldsetSection('the-position-fieldset');
             showFieldsetSection('national-address-fieldset');
+            showFieldsetSection('communication-methods-fieldset');
             showFieldsetSection('activities-fieldset');
             showFieldsetSection('chambers-events');
             showBlockByClass('terms-policies-section');
@@ -435,6 +462,7 @@ AUI().ready(function(A) {
 
             showBlockByClass('contact-information-label');
             showBlockByClass('commercial-register-block');
+            showBlockByClass('establishment-address');
             showFieldsetSection('the-facility-fieldset');
             showCommonFields();
             showBlockByClass('contact-information-departments');
@@ -484,13 +512,14 @@ AUI().ready(function(A) {
             window.selectedBeneficiaryType = 'joint';
 
             showBlockByClass('contact-information-label');
+            showBlockByClass('additional-mobile-block');
             showBlockByClass('commercial-register-block');
             showFieldsetSection('the-name-fieldset');
             showFieldsetSection('the-position-fieldset');
+            showFieldsetSection('communication-methods-fieldset');
             showFieldsetSection('the-facility-fieldset');
             showBlockByClass('email-mobile-block');
 
-            const namespace = window.portletNamespace;
 
             // Hide full width div and show partial width with button
             document.getElementById(`${namespace}crNumberFullDiv`).style.display = 'none';
@@ -507,6 +536,32 @@ AUI().ready(function(A) {
             addRequiredIndicator('#' + namespace + 'mobile');
 
 
+        }
+
+        var submitButton = A.one('#' + namespace + 'contactForm input[type="submit"], #' + namespace + 'contactForm button[type="submit"]');
+        if (submitButton) {
+            submitButton.on('click', function(event) {
+
+                // Always prevent the default action first
+                event.preventDefault();
+                event.stopPropagation();
+
+                // Run validation
+                if (!window.validateForm()) {
+                    console.log("Validation failed - submission blocked");
+                    window.formValidationPassed = false;
+                    return false;
+                }
+
+                console.log("Validation passed - submitting form");
+                window.formValidationPassed = true;
+
+                // Manually submit the form after validation passes
+                var formElement = form.getDOMNode();
+                if (formElement) {
+                    formElement.submit();
+                }
+            });
         }
 
         // Clear error message when field value changes
@@ -544,13 +599,18 @@ AUI().ready(function(A) {
         }
 
         form?.on('submit', function (event) {
-            console.log("Submit event triggered");
-            if (!window.validateForm()) {
+            console.log("Form submit event triggered, validation flag:", window.formValidationPassed);
+
+            if (!window.formValidationPassed) {
                 event.preventDefault();
-                console.log("Submission prevented");
+                event.stopPropagation();
+                event.stopImmediatePropagation();
                 return false;
             }
-            console.log("Form is valid, submission allowed");
+
+            // Reset the flag for next time
+            window.formValidationPassed = false;
+            return true;
         });
 
 
@@ -571,5 +631,6 @@ AUI().ready(function(A) {
                 }
             });
         });
+    }
 
 });
